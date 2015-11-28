@@ -6,4 +6,10 @@ How to
 
 This script will download BCA bank statement and save to sqlite in data folder
 
-USAGE : pybca.py [username] [password]
+USAGE : `pybca.py [username] [password]`
+
+Installation
+---
+
+- Install python 3 and pip3 [https://www.python.org/downloads/](https://www.python.org/downloads/)
+- Run : `pip3 install -r requirements.txt`
