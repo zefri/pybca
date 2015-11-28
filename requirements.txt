@@ -1,0 +1,5 @@
+# Install with: `pip3 install -r requirements.txt`
+
+beautifulsoup4==4.4.1
+selenium==2.48.0
+SQLAlchemy==1.0.9
