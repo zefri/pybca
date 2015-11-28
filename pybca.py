@@ -16,6 +16,9 @@ Base = declarative_base()
 class DbaseManager:
     
     def __init__(self, user):
+        if not os.path.exists("data"):
+            os.makedirs("data")
+            
         self.dbasePath = "data/{0}.db3".format(user)
         
     def create_table(self):
