@@ -5,8 +5,8 @@ How to
 ---
 
 This script will :
-1. download BCA bank statement and save to sqlite in data folder
-2. take a screen shot of transaction histories to data folder
+- download BCA bank statement and save to sqlite in data folder
+- take a screen shot of transaction histories to data folder
 
 USAGE : `pybca.py [username] [password]`
 
