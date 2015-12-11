@@ -17,33 +17,31 @@ Base = declarative_base()
 
 class DbaseManager:
     
-    def __init__(self, user):
+    def __init__(self, user, conn_str):
         wkdir = "data/{0}".format(user) 
         if not os.path.exists(wkdir):
             os.makedirs(wkdir)
             
-        self.dbasePath = "{0}/data.db3".format(wkdir)
+        self.conn_str = conn_str
         
     def create_table(self):
         
-        exists = os.path.isfile(self.dbasePath)
-        engine = create_engine('sqlite:///{0}'.format(self.dbasePath), echo=True)
-        self.session = sessionmaker(bind=engine)
-        
-        if not exists :
-            metadata = MetaData(engine)
-            metadata.bind = engine
+        engine = create_engine(self.conn_str, echo=True)
+        self.session = sessionmaker(bind=engine, expire_on_commit=False)
+                
+        metadata = MetaData(engine)
+        metadata.bind = engine
 
-            genre_table = Table('trans',metadata,
-                                    Column('id',Integer,primary_key=True),
-                                    Column('tanggal', Date),
-                                    Column('keterangan', String(256)),
-                                    Column('cabang', String(256)),
-                                    Column('jumlah', BigInteger),
-                                    Column('tipe', String(2)),
-                                    Column('saldo',BigInteger)
-                                    )
-            metadata.create_all(engine)
+        genre_table = Table('trans',metadata,
+                                Column('id',Integer,primary_key=True),
+                                Column('tanggal', Date),
+                                Column('keterangan', String(256)),
+                                Column('cabang', String(256)),
+                                Column('jumlah', BigInteger),
+                                Column('tipe', String(2)),
+                                Column('saldo',BigInteger)
+                                )
+        metadata.create_all(engine)
         
     def save(self, trans):
         session = self.session()
@@ -53,14 +51,17 @@ class DbaseManager:
         if len(exists) == 0 :
             session.add(trans)
             session.commit()
+            session.close()
+            
         return trans
     
     def get_last_trans(self):
         session = self.session()
-        return session.query(Trans, func.max(Trans.tanggal)).first()[1]
+        last = session.query(Trans, func.max(Trans.tanggal)).first()[1]
+        session.close()
         
+        return last
         
-
 class Trans(Base) :
     __tablename__ = 'trans'
     
@@ -145,6 +146,8 @@ class AutoBrowser():
         for x in range(0, num):
             links = self.driver.find_elements_by_css_selector("a")
             links[x].click()
+            
+            wait.until(lambda d: d.find_elements_by_css_selector("input[type='submit'][value='Kembali']"))
             
             fname = self.__get_fname(self.driver.page_source)
             
@@ -255,10 +258,10 @@ class AutoBrowser():
     
     
 class PyBCA :
-    def __init__(self, user, pwd):
+    def __init__(self, user, pwd, connstr):
         self.user = user
         self.pwd = pwd
-        self.dbman = DbaseManager(user)
+        self.dbman = DbaseManager(user, connstr)
         self.dbman.create_table()
         
     def save(self):
@@ -269,7 +272,7 @@ class PyBCA :
         
         browser = AutoBrowser()
         for tran in browser.grep(self.user, self.pwd, last):
-            self.dbman.save(tran)
+            tran = self.dbman.save(tran)
             print(tran)
             
         browser.save_all_evidences(self.user, self.pwd, last)
@@ -277,12 +280,15 @@ class PyBCA :
         
 if __name__ == "__main__":    
     
+    #mysql information
+    constr = 'mysql://user:pwd@localhost/dbase'
+    
     if len(sys.argv) != 3 :
         print("usage : pybca.py [username] [password]")
         sys.exit(0)
         
     _, user, name = sys.argv
-    bca = PyBCA(user, name)
+    bca = PyBCA(user, name, constr)
     bca.save()
     
     
