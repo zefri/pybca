@@ -122,8 +122,20 @@ class AutoBrowser():
         select = Select(self.driver.find_element_by_name("value(startMt)"))
         select.select_by_visible_text(MONTHS[fromDate.month-1])
 
+        select = Select(self.driver.find_element_by_name("value(startYr)"))
+        select.select_by_visible_text(fromDate.strftime("%Y"))
+
+        ytd = (datetime.datetime.now()-datetime.timedelta(days=1)).date()
+
         select = Select(self.driver.find_element_by_name("value(endDt)"))
-        select.select_by_visible_text(datetime.datetime.now().strftime("%d"))
+        select.select_by_visible_text(ytd.strftime("%d"))
+
+        select = Select(self.driver.find_element_by_name("value(endMt)"))
+        select.select_by_visible_text(MONTHS[ytd.month-1])
+
+        select = Select(self.driver.find_element_by_name("value(endYr)"))
+        select.select_by_visible_text(ytd.strftime("%Y"))
+
 
         # to prevent Tanggal akhir lebih besar dari tanggal hari ini alert
         try:
@@ -200,8 +212,19 @@ class AutoBrowser():
         select = Select(self.driver.find_element_by_name("value(startMt)"))
         select.select_by_visible_text(MONTHS[fromDate.month-1])
 
+        select = Select(self.driver.find_element_by_name("value(startYr)"))
+        select.select_by_visible_text(fromDate.strftime("%Y"))
+
+        ytd = (datetime.datetime.now()-datetime.timedelta(days=1)).date()
+
         select = Select(self.driver.find_element_by_name("value(endDt)"))
-        select.select_by_visible_text(datetime.datetime.now().strftime("%d"))
+        select.select_by_visible_text(ytd.strftime("%d"))
+
+        select = Select(self.driver.find_element_by_name("value(endMt)"))
+        select.select_by_visible_text(MONTHS[ytd.month-1])
+
+        select = Select(self.driver.find_element_by_name("value(endYr)"))
+        select.select_by_visible_text(ytd.strftime("%Y"))
 
         # to prevent Tanggal akhir lebih besar dari tanggal hari ini alert
         try:
