@@ -1,4 +1,4 @@
-import os, sqlite3, sys, datetime
+import os, sqlite3, sys, datetime, time
 
 from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
@@ -105,8 +105,11 @@ class AutoBrowser():
 
         wait.until(lambda d: d.find_element_by_id("user_id"))
 
+        time.sleep(1)
         self.driver.find_element_by_id("user_id").send_keys(user)
+        time.sleep(1)
         self.driver.find_element_by_id("pswd").send_keys(pwd)
+        time.sleep(1)
         self.driver.find_element_by_name("value(Submit)").click()
         # click menu
         self.driver.switch_to.frame(self.driver.find_element_by_name("menu"))
