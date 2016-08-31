@@ -46,7 +46,9 @@ class DbaseManager:
     def save(self, trans):
         session = self.session()
         exists = session.query(Trans).filter(
-        and_(Trans.tanggal == trans.tanggal.strftime("%Y-%m-%d"), Trans.keterangan == trans.keterangan)).all()
+        and_(Trans.tanggal == trans.tanggal.strftime("%Y-%m-%d"),
+        Trans.keterangan == trans.keterangan, Trans.jumlah == trans.jumlah,
+        Trans.saldo == trans.saldo)).all()
 
         if len(exists) == 0 :
             session.add(trans)
